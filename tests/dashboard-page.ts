@@ -1,4 +1,6 @@
 import { expect, type Locator, type Page } from '@playwright/test';
+import { config } from 'dotenv';
+config();
 
 export class DashboardPage {
   //Attributes

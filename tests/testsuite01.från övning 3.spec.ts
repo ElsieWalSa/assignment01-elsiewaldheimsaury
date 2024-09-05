@@ -1,5 +1,7 @@
 import { test, expect } from '@playwright/test';
-// import { faker } from '@faker-js/faker';
+import { faker } from '@faker-js/faker';
+import { DashboardPage } from './dashboard-page';
+import { LoginPage } from './login-page';
 
 // Testcase 01, show browser
 test('has title', async ({ page }) => {
