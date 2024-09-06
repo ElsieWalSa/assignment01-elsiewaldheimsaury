@@ -5,6 +5,7 @@ import { LoginPage } from './login-page';
 import { config } from 'dotenv';
 config();
 
+console.log('Hello World')
 console.log('Test is starting1');
 
 const url = process.env.BASE_URL;
