@@ -40,6 +40,7 @@ export class LoginPage {
     await this.usernameTextfield.fill(username);
     await this.passwordTextfield.fill(password);
     await this.loginButton.click();
+   // await expect(this.page.getByRole('heading', { name: 'Tester Hotel Overview' })).toBeVisible();
 
   }
 
