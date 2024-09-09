@@ -127,13 +127,54 @@ const telephoneDiv = await items.nth(itemCountafter-1).locator('div.telephone');
   console.log(`Text i div-elementet: ${nameContent}`);
   expect(nameContent).toContain('Nils');
   });
-  // Add a bill check if the information is correct
+
+  // Add a bill
   test('Test case 04', async ({ page }) => {
     await expect(page.getByRole('heading', { name: 'Tester Hotel Overview' })).toBeVisible();
+
+    // click on bills view
+  await page.locator('#app > div > div > div:nth-child(3) > a').click();
+
+  // Count number of bills
+    const items = page.locator('[class="card bill"]');
+    const itemCount = await items.count();
+    console.log('Items', itemCount);
+
+  // create new bill
+  await expect(page.getByText('Bills')).toBeVisible();
+  await page.getByRole('link', { name: 'Create Bill' }).click();
+  await expect(page.getByText('New Bill')).toBeVisible();
+  await expect(page.getByText('Value')).toBeVisible();
+  await page.getByRole('spinbutton').fill('1');
+  await page.locator('.checkbox').click();
+
+  // // Check if the information is correct
+  // // Count bills after adding a bill
+  const itemCountafter = await items.count();
+  expect(itemCountafter).toEqual(itemCount + 1);
+
+  // // Se om informationen stämmer med det jag lagt in
+  // await expect(items.nth(itemCountafter-1).locator('text="Floor 13, Room 1307"')).toBeVisible();
+
+
   });
 // Do a reservation and check if the information is correct
 test('Test case 05', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Tester Hotel Overview' })).toBeVisible();
+
+    // click on reservations view
+    await page.locator('#app > div > div > div:nth-child(4) > a').click();
+
+    // Count number of clients
+      const items = page.locator('[class="card reservation card"]');
+      const itemCount = await items.count();
+      console.log('Items', itemCount);
+
+
+
+
+
+
 
 });
 // Log out and se if the added information is gone, check Room, clients, bills and reservation
