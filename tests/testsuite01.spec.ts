@@ -236,5 +236,12 @@ test.describe("Test suite 01", () => {
     ).toBeVisible();
     await page.getByRole("button", { name: "Logout" }).click();
     await expect(page.getByText("Login")).toBeVisible();
+
   });
+    // Jag vill logga ut och sedan logga in och se att informationen jag lagt in i ovanstående test ligger kvar
+    // -borde kunna läsa in informationen i ovanstående test 
+    // Vill lägga in randomiserande data med fakerjs -läsa på
+    // Göra en setup och teardown - setup för att slippa upprepa min inloggningskod i varje test
+    // Page objects model -läsa på 
+  
 });
