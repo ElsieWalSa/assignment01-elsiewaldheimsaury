@@ -12,7 +12,8 @@
     "@playwright/test": "^1.46.1",
     "@types/dotenv": "^8.2.0",
     "@types/jquery": "^3.5.30",
-    "@types/node": "^22.5.3"
+    "@types/node": "^22.5.3",
+    "prettier": "3.3.3"
   },
   "dependencies": {
     "dotenv": "^16.4.5"
