@@ -2,6 +2,8 @@ import { test, expect } from "@playwright/test";
 import { DashboardPage } from "./dashboard-page";
 import { LoginPage } from "./login-page";
 import { config } from "dotenv";
+import { faker } from "@faker-js/faker";
+import { generateUserData, generateRoomData} from './testdata';
 config();
 
 // console.log('Test is starting1');
@@ -47,7 +49,8 @@ test.describe("Test suite 01", () => {
     const itemCount = await items.count();
     console.log("Items", itemCount);
 
-    // Create Room
+    
+     // Create Room
     await page.getByRole("link", { name: "Create Room" }).click();
     await expect(page.getByText("New Room")).toBeVisible();
     await expect(
@@ -172,7 +175,7 @@ test.describe("Test suite 01", () => {
     // Count number of bills
     const items = page.locator('[class="card bill"]');
     const itemCount = await items.count();
-    console.log("Items", itemCount);
+    console.log("Items before", itemCount);
 
     // create new bill
     await expect(page.getByText("Bills")).toBeVisible();
@@ -180,16 +183,41 @@ test.describe("Test suite 01", () => {
     await expect(page.getByText("New Bill")).toBeVisible();
     await expect(page.getByText("Value")).toBeVisible();
     await page.getByRole("spinbutton").fill("1");
-    await page.locator(".checkbox").click();
 
-    // // Check if the information is correct
+    // half of the click is false
+    const paidclick = faker.datatype.boolean(0.5) 
+    console.log('fejk',paidclick);
+    if (paidclick) {
+      await page.locator(".checkbox").click();
+  }
+    // await page.locator(".checkbox").click();
+    await page.getByText('Save').click();
+    await expect(page.getByRole("heading", { name: "Bills" })).toBeVisible();
 
-    // // Count bills after adding a bill - får felmeddelande
-    // const itemCountafter = await items.count();
-    // expect(itemCountafter).toEqual(itemCount + 1);
+    // checkbox - ej klickat i
 
-    // // Se om informationen stämmer med det jag lagt in -
-    // await expect(items.nth(itemCountafter-1).locator('text="Floor 13, Room 1307"')).toBeVisible();
+    // Check if the information is correct
+    // Count all the bills after adding a bill 
+    const itemCountafter = await items.count();
+    expect(itemCountafter).toEqual(itemCount + 1);
+    console.log("Items after", itemCountafter);
+
+    // Count id, should be the same as the last element
+    const idDiv = await items.nth(itemCountafter - 1).getByRole('heading').textContent();
+    console.log('ID', idDiv)
+    expect(idDiv).toContain(String(itemCountafter));
+    expect(idDiv).toContain('ID: '+String(itemCountafter));
+
+    // If bill paid or not
+    const paidDiv = await items.nth(itemCountafter - 1).locator('[class="paid"]');
+    if (paidclick) 
+      expect(paidDiv).toContainText('Yes');
+    else
+    expect(paidDiv).toContainText('No');
+// 1000000000 value max 
+    
+   
+
   });
   // Do a reservation and check if the information is correct
   test("Test case 05", async ({ page }) => {
@@ -243,5 +271,49 @@ test.describe("Test suite 01", () => {
     // Vill lägga in randomiserande data med fakerjs -läsa på
     // Göra en setup och teardown - setup för att slippa upprepa min inloggningskod i varje test
     // Page objects model -läsa på 
-  
+
+    // Testcase med faker room
+    test("Test case 07", async ({ page }) => {
+      await expect(
+        page.getByRole("heading", { name: "Tester Hotel Overview" }),
+      ).toBeVisible();
+
+      const roomData = generateRoomData();
+      console.log('roomnumber', roomData.roomnumber);
+      console.log('floornumber', roomData.floornumber);
+      console.log('roomavailable', roomData.roomavailable);
+      console.log('roomprice', roomData.roomprice);
+      console.log('roomcategory', roomData.roomcategory);
+      console.log('roomfeatures', roomData.roomfeatures);
+
+      // click on button room
+    await page.locator("#app > div > div > div:nth-child(1) > a").click();
+
+    // Count number of rooms
+    const items = page.locator('[class="card room"]');
+    const itemCount = await items.count();
+    console.log("Items", itemCount);
+
+    await page.getByRole("link", { name: "Create Room" }).click();
+    await expect(page.getByText("New Room")).toBeVisible();
+    await expect(
+      page.locator("label").filter({ hasText: /^Category$/ }),
+    ).toBeVisible();
+    await page.getByRole("combobox").selectOption(roomData.roomcategory);
+    await page.locator("div").filter({ hasText: /^Number$/ }).getByRole("spinbutton").fill(String(roomData.roomnumber));
+    await page.locator("div").filter({ hasText: /^Floor$/ }).getByRole("spinbutton").fill(String(roomData.floornumber));
+    if (roomData.roomavailable) {
+      await page.locator(".checkbox").click();
+  }
+    await page.locator("div").filter({ hasText: /^Price$/ }).getByRole("spinbutton").fill(String(roomData.roomprice));
+    await page.getByRole("listbox").selectOption(roomData.roomfeatures);
+    await page.getByText("Save").click();
+    await expect(page.getByRole("heading", { name: "Rooms" })).toBeVisible();
+
+
+
+    });
+
+
+
 });
