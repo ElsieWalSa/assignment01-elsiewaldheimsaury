@@ -294,6 +294,7 @@ test.describe("Test suite 01", () => {
     const itemCount = await items.count();
     console.log("Items", itemCount);
 
+    // Create Room
     await page.getByRole("link", { name: "Create Room" }).click();
     await expect(page.getByText("New Room")).toBeVisible();
     await expect(
@@ -310,10 +311,42 @@ test.describe("Test suite 01", () => {
     await page.getByText("Save").click();
     await expect(page.getByRole("heading", { name: "Rooms" })).toBeVisible();
 
+    // Count rooms after adding a room
+    const itemCountafter = await items.count();
+    expect(itemCountafter).toEqual(itemCount + 1);
+
+    // Check that information is correct
+    const textinformation = "Floor "+ String(roomData.floornumber)+", Room "+String(roomData.roomnumber);
+
+    await expect(
+      items.nth(itemCountafter - 1).locator(`text=${textinformation}`)).toBeVisible();
+    await expect(
+      items
+        .nth(itemCountafter - 1)
+      .locator(`h3:has-text("${textinformation}")`),
+    ).toBeVisible();
+
+    });
+
+    // Create client with faker js
+  test("Test case 08", async ({ page }) => {
+    await expect(
+      page.getByRole("heading", { name: "Tester Hotel Overview" }),
+    ).toBeVisible();
+
+    // click on clients view
+    await page.locator("#app > div > div > div:nth-child(2) > a").click();
+
+    // Count number of clients
+    const items = page.locator('[class="card client"]');
+    const itemCount = await items.count();
+    console.log("Items", itemCount);
+
+  
 
 
     });
 
 
 
-});
+
