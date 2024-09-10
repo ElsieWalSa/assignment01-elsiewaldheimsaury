@@ -25,24 +25,27 @@ export function generateRoomData() {
         roomprice: faker.number.int({ min: 100, max: 1000 }),
         // features
         roomfeatures: faker.helpers.arrayElements(['Balcony', 'Ensuite', 'Sea View', 'Penthouse'])
-
-        // Features Balcony, Ensuite, Sea View, Penthouse
-
     };
 }
-// skapa rum
-// Category - single, double, twin,
-// Number
-//  Floor
-// Available
-// Price
-// Features Balcony, Ensuite, Sea View, Penthouse
+
+export function generateClientData() {
+    return {
+        clientname: faker.person.fullName(),
+        clientemail: faker.internet.email(),
+        // clientphonenumber: faker.phone.number({ style: 'international' }),
+        clientphonenumber:generateTelephoneNumber(),
+    };
+}
+export function generateTelephoneNumber() {
+    const areaCode = '07' + faker.string.numeric(1); // Generats the first bit of a swedish phonenumber 070, 073, 076, etc.
+    const firstPart = faker.string.numeric(3);       // First bit for example 123
+    const secondPart = faker.string.numeric(2);      // Second bit for example 45
+    const thirdPart = faker.string.numeric(2);       // Third bit for example 67
+
+    return `${areaCode}-${firstPart} ${secondPart} ${thirdPart}`;
+    };
 
 
-// Clients
-// Name
-// Email
-// Telephone
 
 // New Bill
 // Value

@@ -3,7 +3,7 @@ import { DashboardPage } from "./dashboard-page";
 import { LoginPage } from "./login-page";
 import { config } from "dotenv";
 import { faker } from "@faker-js/faker";
-import { generateUserData, generateRoomData} from './testdata';
+import { generateUserData, generateRoomData, generateClientData } from './testdata';
 config();
 
 // console.log('Test is starting1');
@@ -330,6 +330,8 @@ test.describe("Test suite 01", () => {
 
     // Create client with faker js
   test("Test case 08", async ({ page }) => {
+    const clientdata = generateClientData();
+
     await expect(
       page.getByRole("heading", { name: "Tester Hotel Overview" }),
     ).toBeVisible();
@@ -342,11 +344,57 @@ test.describe("Test suite 01", () => {
     const itemCount = await items.count();
     console.log("Items", itemCount);
 
+    // create new client
+    await expect(page.getByText("Clients")).toBeVisible();
+    await page.getByRole("link", { name: "Create Client " }).click();
+    await expect(page.getByText("New Client")).toBeVisible();
+    await expect(
+      page.locator("label").filter({ hasText: /^Name$/ }),
+    ).toBeVisible();
+    await page.locator("div").filter({ hasText: /^Name$/ }).getByRole("textbox").fill(clientdata.clientname);
+    await page.locator('input[type="email"]').fill(clientdata.clientemail);
+    await page.locator("div").filter({ hasText: /^Telephone$/ }).getByRole("textbox").fill(clientdata.clientphonenumber);
+    await page.getByText("Save").click();
+    await expect(page.getByRole("heading", { name: "Clients" })).toBeVisible();
+
+
+
+//  Kolla att informationen stämmer överens med fakerjs som lagts in 
+    // Check if the information is correct
+    // Count client after adding a client
+    const itemCountafter = await items.count();
+    expect(itemCountafter).toEqual(itemCount + 1);
+
+    // list always start a 0
+    const telephoneDiv = await items
+      .nth(itemCountafter - 1)
+      .locator("div.telephone");
+
+    // get text from div-element
+    const textContent = await telephoneDiv.textContent();
+
+    // Log text to consol
+    console.log(`Text i div-elementet: ${textContent}`);
+    expect(textContent).toBe("Telephone: 070-1235689");
+    const emailDiv = await items.nth(itemCountafter - 1).locator("div.email");
+
+    // get text from div-element
+    const emailContent = await emailDiv.textContent();
+
+    // Log text to consol
+    console.log(`Text i div-elementet: ${emailContent}`);
+    expect(emailContent).toBe("Email: nisse@x.com");
+    const nameDiv = await items.nth(itemCountafter - 1).locator("h3");
+
+    // get text from div-element
+    const nameContent = await nameDiv.textContent();
+
+    // Log text to consol
+    console.log(`Text i div-elementet: ${nameContent}`);
+    expect(nameContent).toContain("Nils");
   
 
 
-    });
+    }); 
 
-
-
-
+  });
