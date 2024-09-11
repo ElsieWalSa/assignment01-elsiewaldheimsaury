@@ -44,6 +44,21 @@ export function generateTelephoneNumber() {
 
     return `${areaCode}-${firstPart} ${secondPart} ${thirdPart}`;
     };
+ 
+export function generateBillData() {
+    return {
+        billvalue: faker.number.int({ min: 10, max: 1000000000 }),
+        billclick:faker.datatype.boolean(0.5),
+
+    //     const paidclick = faker.datatype.boolean(0.5) 
+    //     console.log('fejk',paidclick);
+    // if (paidclick) {
+    //   await page.locator(".checkbox").click();
+
+
+        };
+    }
+
 
 
 

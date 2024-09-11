@@ -3,7 +3,7 @@ import { DashboardPage } from "./dashboard-page";
 import { LoginPage } from "./login-page";
 import { config } from "dotenv";
 import { faker } from "@faker-js/faker";
-import { generateUserData, generateRoomData, generateClientData } from './testdata';
+import { generateUserData, generateRoomData, generateClientData, generateBillData} from './testdata';
 config();
 
 // console.log('Test is starting1');
@@ -358,7 +358,6 @@ test.describe("Test suite 01", () => {
     await expect(page.getByRole("heading", { name: "Clients" })).toBeVisible();
 
 
-
 //  Kolla att informationen stämmer överens med fakerjs som lagts in 
     // Check if the information is correct
     // Count client after adding a client
@@ -369,32 +368,95 @@ test.describe("Test suite 01", () => {
     const telephoneDiv = await items
       .nth(itemCountafter - 1)
       .locator("div.telephone");
-
-    // get text from div-element
+    // get phonetext from div-element
     const textContent = await telephoneDiv.textContent();
-
     // Log text to consol
-    console.log(`Text i div-elementet: ${textContent}`);
-    expect(textContent).toBe("Telephone: 070-1235689");
-    const emailDiv = await items.nth(itemCountafter - 1).locator("div.email");
-
-    // get text from div-element
+    // compare phonenumbers to eachother
+    console.log(`Text i div-elementet telefon: ${textContent}`);
+    console.log(`xx:${clientdata.clientphonenumber}`);
+    const telephonenumbertobe = "Telephone: "+ clientdata.clientphonenumber;
+    expect(textContent).toBe(`${telephonenumbertobe}`);
+    
+    // get emailtext from div-element
+    const emailDiv = await items
+      .nth(itemCountafter - 1)
+      .locator("div.email");
     const emailContent = await emailDiv.textContent();
 
-    // Log text to consol
-    console.log(`Text i div-elementet: ${emailContent}`);
-    expect(emailContent).toBe("Email: nisse@x.com");
-    const nameDiv = await items.nth(itemCountafter - 1).locator("h3");
+    // Log emailtext to consol
+    console.log(`Text i div-elementet email: ${emailContent}`);
+    console.log(`xx:${clientdata.clientemail}`);
+    const emailtobe = "Email: "+ clientdata.clientemail;
+    expect(emailContent).toBe(`${emailtobe}`);
 
-    // get text from div-element
+    // get text from div-element name
+    const nameDiv = await items.nth(itemCountafter - 1).locator("h3");
     const nameContent = await nameDiv.textContent();
 
-    // Log text to consol
-    console.log(`Text i div-elementet: ${nameContent}`);
-    expect(nameContent).toContain("Nils");
-  
+    // // Log nametext to consol
+    console.log(`Text i div-elementet name: ${nameContent}`);
+    console.log(`name:${clientdata.clientname}`);
+    expect(nameContent).toContain(`${clientdata.clientname}`);
 
+    const namewithnumber = clientdata.clientname + " (#" + String(itemCountafter)+")";
+    expect(nameContent).toBe(namewithnumber);
 
     }); 
+    // Create bill with fakerjs
 
+    test("Test case 09", async ({ page }) => {
+      const clientbill = generateBillData();
+
+      await expect(
+        page.getByRole("heading", { name: "Tester Hotel Overview" }),
+      ).toBeVisible();
+  
+      // click on bills view
+      await page.locator("#app > div > div > div:nth-child(3) > a").click();
+  
+      // Count number of bills
+      const items = page.locator('[class="card bill"]');
+      const itemCount = await items.count();
+      console.log("Items before", itemCount);
+
+      // create new bill
+    await expect(page.getByText("Bills")).toBeVisible();
+    await page.getByRole("link", { name: "Create Bill" }).click();
+    await expect(page.getByText("New Bill")).toBeVisible();
+    await expect(page.getByText("Value")).toBeVisible();
+    await page.getByRole("spinbutton").fill(String(clientbill.billvalue));
+    if (clientbill.billclick) {
+      await page.locator(".checkbox").click();
+    }
+    await page.getByText('Save').click();
+    await expect(page.getByRole("heading", { name: "Bills" })).toBeVisible();
+
+    // Check if the information is correct
+    // Count all the bills after adding a bill 
+    const itemCountafter = await items.count();
+    expect(itemCountafter).toEqual(itemCount + 1);
+    console.log("Items after", itemCountafter);
+
+    // Count id, should be the same as the last element
+    const idDiv = await items.nth(itemCountafter - 1).getByRole('heading').textContent();
+    console.log('ID', idDiv)
+    expect(idDiv).toContain(String(itemCountafter));
+    expect(idDiv).toContain('ID: '+String(itemCountafter));
+
+    // If bill paid or not
+    const paidDiv = await items.nth(itemCountafter - 1).locator('[class="paid"]');
+    if (clientbill.billclick) 
+      expect(paidDiv).toContainText('Yes');
+    else
+    expect(paidDiv).toContainText('No');
+// hur kan jag skriva för att se att det stämmer? 
+    
+
+
+    
+
+    
+
+
+    })
   });
