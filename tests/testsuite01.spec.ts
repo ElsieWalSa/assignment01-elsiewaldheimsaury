@@ -254,8 +254,8 @@ test.describe("Test suite 01", () => {
     await page.getByRole("combobox").nth(2).selectOption("3");
 
     // // Count reservations after adding a new reservation
-    // const itemCountafter = await items.count();
-    // expect(itemCountafter).toEqual(itemCount + 1);
+    const itemCountafter = await items.count();
+    expect(itemCountafter).toEqual(itemCount + 1);
   });
   // Log out and se if the added information is gone, check Room, clients, bills and reservation
   test("Test case 06", async ({ page }) => {
@@ -272,7 +272,7 @@ test.describe("Test suite 01", () => {
     // Göra en setup och teardown - setup för att slippa upprepa min inloggningskod i varje test
     // Page objects model -läsa på 
 
-    // Testcase med faker room
+    // Testcase med fakerjs room
     test("Test case 07", async ({ page }) => {
       await expect(
         page.getByRole("heading", { name: "Tester Hotel Overview" }),
@@ -370,8 +370,7 @@ test.describe("Test suite 01", () => {
       .locator("div.telephone");
     // get phonetext from div-element
     const textContent = await telephoneDiv.textContent();
-    // Log text to consol
-    // compare phonenumbers to eachother
+    // Log text to consol compare phonenumbers to eachother
     console.log(`Text i div-elementet telefon: ${textContent}`);
     console.log(`xx:${clientdata.clientphonenumber}`);
     const telephonenumbertobe = "Telephone: "+ clientdata.clientphonenumber;
@@ -448,10 +447,10 @@ test.describe("Test suite 01", () => {
       expect(paidDiv).toContainText('Yes');
     else
     expect(paidDiv).toContainText('No');
-// hur kan jag skriva för att se att det stämmer? 
     
     });
     // Do a reservation and check if the information is correct
+
   test("Test case 10", async ({ page }) => {
     const reservationdata = generateReservationData ();
     console.log("startar här",reservationdata.reservationStart);
@@ -475,19 +474,23 @@ test.describe("Test suite 01", () => {
     await page.getByRole("link", { name: "Create Reservation" }).click();
     await expect(page.getByText("New Reservation")).toBeVisible();
     await expect(page.getByText("Start")).toBeVisible();
-
-    // console.log(reservationdata.reservationStart.format("YYYY-MM-DD"));
-
     await page.locator("div").filter({ hasText: /^Start \(Format YYYY-MM-DD\)$/ }).getByPlaceholder("YYYY-MM-DD").fill(String(reservationdata.reservationStart));
     await page.locator("div").filter({ hasText: /^End \(Format YYYY-MM-DD\)$/ }).getByPlaceholder("YYYY-MM-DD").fill(String(reservationdata.reservationEnd));
-    // await page.getByRole("combobox").first().selectOption(String(reservationdata.reservationclient));
-    // await page.getByRole("combobox").nth(1).selectOption(String(reservationdata.reservationroom));
-    // await page.getByRole("combobox").nth(2).selectOption(String(reservationdata.reservationbill));;
-
+    
 // slumpa inom det som finns i listorna - är ett tal som finns i listan
     await page.getByRole("combobox").first().selectOption(String(reservationdata.reservationclient));
     await page.getByRole("combobox").nth(1).selectOption(String(reservationdata.reservationroom));
     await page.getByRole("combobox").nth(2).selectOption(String(reservationdata.reservationbill));
+    await page.getByText("Save").click();
+    await expect(page.getByText("Reservations" )).toBeVisible();
+
+    // Count reservations after adding a new reservation
+    const itemsafter = page.locator('[class="card reservation card"]');
+    const itemCountafter = await itemsafter.count();
+    expect(itemCountafter).toEqual(itemCount + 1);
+    console.log("itemsafter",itemCountafter);
+
+
 
 
   });
