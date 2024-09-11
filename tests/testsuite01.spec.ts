@@ -3,8 +3,8 @@ import { DashboardPage } from "./dashboard-page";
 import { LoginPage } from "./login-page";
 import { config } from "dotenv";
 import { faker } from "@faker-js/faker";
-import { generateUserData, generateRoomData, generateClientData, generateBillData} from './testdata';
-config();
+import { generateUserData, generateRoomData, generateClientData, generateBillData, generateReservationData, generateDates} from './testdata';
+// config()
 
 // console.log('Test is starting1');
 
@@ -403,7 +403,6 @@ test.describe("Test suite 01", () => {
 
     }); 
     // Create bill with fakerjs
-
     test("Test case 09", async ({ page }) => {
       const clientbill = generateBillData();
 
@@ -451,12 +450,45 @@ test.describe("Test suite 01", () => {
     expect(paidDiv).toContainText('No');
 // hur kan jag skriva för att se att det stämmer? 
     
+    });
+    // Do a reservation and check if the information is correct
+  test("Test case 10", async ({ page }) => {
+    const reservationdata = generateReservationData ();
+    console.log("startar här",reservationdata.reservationStart);
+    console.log("slutar här",reservationdata.reservationEnd);
+    //const reservationdate = generateDates ();
+    await expect(
+      page.getByRole("heading", { name: "Tester Hotel Overview" }),
+    ).toBeVisible();
+
+    // click on reservations view
+    await page.locator("#app > div > div > div:nth-child(4) > a").click();
+
+    // Count number of reservations
+    const items = page.locator('[class="card reservation card"]');
+    const itemCount = await items.count();
+    console.log("Items", itemCount);
+
+    // Do a new reservation
+
+    await expect(page.getByText("Reservations")).toBeVisible();
+    await page.getByRole("link", { name: "Create Reservation" }).click();
+    await expect(page.getByText("New Reservation")).toBeVisible();
+    await expect(page.getByText("Start")).toBeVisible();
+
+    // console.log(reservationdata.reservationStart.format("YYYY-MM-DD"));
+
+    await page.locator("div").filter({ hasText: /^Start \(Format YYYY-MM-DD\)$/ }).getByPlaceholder("YYYY-MM-DD").fill(String(reservationdata.reservationStart));
+    await page.locator("div").filter({ hasText: /^End \(Format YYYY-MM-DD\)$/ }).getByPlaceholder("YYYY-MM-DD").fill(String(reservationdata.reservationEnd));
+    // await page.getByRole("combobox").first().selectOption(String(reservationdata.reservationclient));
+    // await page.getByRole("combobox").nth(1).selectOption(String(reservationdata.reservationroom));
+    // await page.getByRole("combobox").nth(2).selectOption(String(reservationdata.reservationbill));;
+
+// slumpa inom det som finns i listorna - är ett tal som finns i listan
+    await page.getByRole("combobox").first().selectOption(String(reservationdata.reservationclient));
+    await page.getByRole("combobox").nth(1).selectOption(String(reservationdata.reservationroom));
+    await page.getByRole("combobox").nth(2).selectOption(String(reservationdata.reservationbill));
 
 
-    
-
-    
-
-
-    })
+  });
   });
