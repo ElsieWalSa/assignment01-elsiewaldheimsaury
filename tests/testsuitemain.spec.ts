@@ -6,7 +6,7 @@ import { faker } from "@faker-js/faker";
 import { generateUserData, generateRoomData, generateClientData, generateBillData, generateReservationData, generateDates} from './testdata';
 
 test.describe("Test suite main", () => {
-  let page: Page | undefined; // Declares the page and set it to unddefined
+    let page: Page | undefined; // Declares the page and set it to unddefined
     test.beforeEach(async ({ page }) => {
       const loginPage = new LoginPage(page);
       const dashboardPage = new DashboardPage(page);
@@ -200,7 +200,7 @@ test("Test case 03, create client", async ({ page }) => {
   
   });
   // Do a reservation and check if the information is correct
-test("Test case 05, create a reservation", async ({ page }) => {
+test("Test case 05, create a reservation", async ({page}) => {
   const reservationdata = generateReservationData ();
   console.log("startar här",reservationdata.reservationStart);
 
@@ -250,16 +250,20 @@ test("Test case 05, create a reservation", async ({ page }) => {
   const itemCountafter = await itemsafter.count();
   expect(itemCountafter).toEqual(itemCount + 1);
   console.log("itemsafter",itemCountafter);
+  
 });
 
 // Göra en teardown i min data och logga ut och se att all data försvunnit
 // afterall - 
-test.afterAll(async () => {
+test.afterEach('Teardown', async ({page}) => {
+  await page.waitForTimeout(3000); 
   if (page) {  // control `page` 
-    console.log('Teardown after all tests');
+    console.log('Teardown after tests');
     await page.close(); // close the side if it is open
   } else {
     console.log('No page to close');
   }
 });
+
+
 });
