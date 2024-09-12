@@ -17,21 +17,17 @@ export class LoginPage {
     this.loginButton = page.getByRole("button", { name: "Login" });
   }
 
-  // Methods / functions
-  // async goto() {
-  //   await this.page.goto(`${process.env.BASE_URL}`);
-
   async goto() {
-    console.log("Test is starting2");
-    console.log("Base URL:", process.env.BASE_URL);
-    console.log("Base url2:", "${process.env.BASE_URL}");
+    // console.log("Test is starting2"); //To see that is working
+    // console.log("Base URL:", process.env.BASE_URL);
+    // console.log("Base url2:", "${process.env.BASE_URL}");
 
     await this.page.goto(`${process.env.BASE_URL}`);
   }
 
   async performLogin(username: string, password: string): Promise<void> {
-    console.log("Perform login");
-    console.log("username", username);
+    // console.log("Perform login");
+    // console.log("username", username); // To see that is working as it should
     await this.usernameTextfield.fill(username);
     await this.passwordTextfield.fill(password);
     await this.loginButton.click();

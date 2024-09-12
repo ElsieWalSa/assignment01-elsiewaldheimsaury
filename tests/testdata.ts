@@ -132,29 +132,8 @@ export function generateTelephoneNumber() {
         //const date = reservationStart.getDate();
         console.log("Full",year+"-"+monthStr+"-"+dateStr);
         return year+"-"+monthStr+"-"+dateStr; 
-
-
-        // Göra en metod som tar upp en skapad person eller hårdkodar det
-    
-        
-
-    //         // export function generateDateData() {
-    //         //     return {
-    //         //         const randomDate : faker.date.future({ years: 10 })
-                    
-    
-                    
-    //          }
     
     };
 
-
-
-// New Reservation
-// Start
-// End
-// Client - väljs som nr
-// Room - väljs som nr
-// Bill - Väljs som nr 
 
 
