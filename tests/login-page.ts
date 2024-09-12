@@ -35,13 +35,7 @@ export class LoginPage {
     await this.usernameTextfield.fill(username);
     await this.passwordTextfield.fill(password);
     await this.loginButton.click();
-    // await expect(this.page.getByRole('heading', { name: 'Tester Hotel Overview' })).toBeVisible();
   }
 
-  // async performLogin(username: string, p0: { process: NodeJS.Process; "": any; }, password: string, p1: { process: NodeJS.Process; "": any; }) {
-  //   //fill out the form - 2 textfields and click the submit button
-  //   await this.usernameTextfield.fill(username);
-  //   await this.passwordTextfield.fill(password);
-  //   await this.loginButton.click();
-  // }
+  
 }

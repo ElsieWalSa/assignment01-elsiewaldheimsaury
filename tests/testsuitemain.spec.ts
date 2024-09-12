@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, Page } from "@playwright/test";
 import { DashboardPage } from "./dashboard-page";
 import { LoginPage } from "./login-page";
 import { config } from "dotenv";
@@ -6,6 +6,7 @@ import { faker } from "@faker-js/faker";
 import { generateUserData, generateRoomData, generateClientData, generateBillData, generateReservationData, generateDates} from './testdata';
 
 test.describe("Test suite main", () => {
+  let page: Page | undefined; // Declares the page and set it to unddefined
     test.beforeEach(async ({ page }) => {
       const loginPage = new LoginPage(page);
       const dashboardPage = new DashboardPage(page);
@@ -25,7 +26,6 @@ test("Test case 01", async ({ page }) => {
     await expect(page.getByRole("heading", { name: "Login" })).toBeVisible();
     await page.waitForTimeout(5000);
       });
-
 
 // Testcase med fakerjs room
 test("Test case 02, create room", async ({ page }) => {
@@ -80,7 +80,6 @@ test("Test case 02, create room", async ({ page }) => {
       .nth(itemCountafter - 1)
     .locator(`h3:has-text("${textinformation}")`),
   ).toBeVisible();
-
   });
 
   // Create client with faker js
@@ -100,6 +99,7 @@ test("Test case 03, create client", async ({ page }) => {
   console.log("Items", itemCount);
 
   // create new client
+  await page.waitForTimeout(3000); 
   await expect(page.getByText("Clients")).toBeVisible();
   await page.getByRole("link", { name: "Create Client " }).click();
   await expect(page.getByText("New Client")).toBeVisible();
@@ -151,7 +151,6 @@ test("Test case 03, create client", async ({ page }) => {
 
   const namewithnumber = clientdata.clientname + " (#" + String(itemCountafter)+")";
   expect(nameContent).toBe(namewithnumber);
-
   }); 
   // Create bill with fakerjs
   test("Test case 04, create bill", async ({ page }) => {
@@ -181,8 +180,7 @@ test("Test case 03, create client", async ({ page }) => {
   await page.getByText('Save').click();
   await expect(page.getByRole("heading", { name: "Bills" })).toBeVisible();
 
-  // Check if the information is correct
-  // Count all the bills after adding a bill 
+  // Check if the information is correct, count all the bills after adding a bill 
   const itemCountafter = await items.count();
   expect(itemCountafter).toEqual(itemCount + 1);
   console.log("Items after", itemCountafter);
@@ -205,8 +203,11 @@ test("Test case 03, create client", async ({ page }) => {
 test("Test case 05, create a reservation", async ({ page }) => {
   const reservationdata = generateReservationData ();
   console.log("startar här",reservationdata.reservationStart);
+
   console.log("slutar här",reservationdata.reservationEnd);
-  //const reservationdate = generateDates ();
+  const retries = test.info().retry;
+  console.log(`This is retry number: ${retries}`);
+ 
   await expect(
     page.getByRole("heading", { name: "Tester Hotel Overview" }),
   ).toBeVisible();
@@ -220,6 +221,7 @@ test("Test case 05, create a reservation", async ({ page }) => {
   console.log("Items", itemCount);
 
   // Do a new reservation
+  await page.waitForTimeout(3000); 
   await expect(page.getByText("Reservations")).toBeVisible();
   await page.getByRole("link", { name: "Create Reservation" }).click();
   await expect(page.getByText("New Reservation")).toBeVisible();
@@ -228,25 +230,36 @@ test("Test case 05, create a reservation", async ({ page }) => {
   await page.locator("div").filter({ hasText: /^End \(Format YYYY-MM-DD\)$/ }).getByPlaceholder("YYYY-MM-DD").fill(String(reservationdata.reservationEnd));
   
 // slumpa inom det som finns i listorna - är ett tal som finns i listan
-	await page.getByRole("combobox").first().waitFor({ state: 'visible' });
+  await page.waitForTimeout(3000); 
+	await page.getByRole("combobox").first().waitFor({ state: 'attached' });
   await page.getByRole("combobox").first().selectOption(String(reservationdata.reservationclient));
-  await page.getByRole("combobox").nth(1).waitFor({ state: 'visible' });
+  await page.waitForTimeout(3000); 
+  await page.getByRole("combobox").nth(1).waitFor({ state: 'attached' });
   await page.getByRole("combobox").nth(1).selectOption(String(reservationdata.reservationroom));
-	await page.getByRole("combobox").nth(2).waitFor({ state: 'visible' });
+  await page.waitForTimeout(3000); 
+	await page.getByRole("combobox").nth(2).waitFor({ state: 'attached' });
   await page.getByRole("combobox").nth(2).selectOption(String(reservationdata.reservationbill));
+  await page.waitForTimeout(3000); 
+  await page.getByText("Save").waitFor({ state: 'visible' });
   await page.getByText("Save").click();
 	await page.waitForSelector('text="Reservations"');
 	await expect(page.getByText("Reservations" )).toBeVisible();
 
-  // Count reservations after adding a new reservation
+  // Count reservations after adding a new reservation, to see that they match
   const itemsafter = page.locator('[class="card reservation card"]');
   const itemCountafter = await itemsafter.count();
   expect(itemCountafter).toEqual(itemCount + 1);
   console.log("itemsafter",itemCountafter);
+});
 
-	// 
-})
 // Göra en teardown i min data och logga ut och se att all data försvunnit
-
-
+// afterall - 
+test.afterAll(async () => {
+  if (page) {  // control `page` 
+    console.log('Teardown after all tests');
+    await page.close(); // close the side if it is open
+  } else {
+    console.log('No page to close');
+  }
+});
 });
