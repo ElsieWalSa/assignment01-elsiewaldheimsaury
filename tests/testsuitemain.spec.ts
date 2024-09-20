@@ -1,9 +1,11 @@
 import { test, expect, Page } from "@playwright/test";
-import { DashboardPage } from "./dashboard-page";
-import { LoginPage } from "./login-page";
+import { DashboardPage } from "./pages/dashboard-page";
+import { LoginPage } from "./pages/login-page";
 import { config } from "dotenv";
 import { faker } from "@faker-js/faker";
 import { generateUserData, generateRoomData, generateClientData, generateBillData, generateReservationData, generateDates} from './testdata';
+import { RoomPage } from "./pages/RoomPage";
+
 
 test.describe("Test suite main", () => {
     let page: Page | undefined; // Declares the page and set it to unddefined
@@ -17,73 +19,112 @@ test.describe("Test suite main", () => {
       );
     });
 
-test("Test case 01", async ({ page }) => {
-    const dashboardPage = new DashboardPage(page);
-    await expect(
-        page.getByRole("heading", { name: "Tester Hotel Overview" }),
-    ).toBeVisible();
-    await dashboardPage.performLogout();
-    await expect(page.getByRole("heading", { name: "Login" })).toBeVisible();
-    await page.waitForTimeout(5000);
+test("Test case 01, log in and out", async ({ page }) => {
+  const loginPage = new LoginPage(page);
+  const dashboardPage = new DashboardPage(page);
+
+  await loginPage.goto();
+  await loginPage.performLogin(`${process.env.TEST_USERNAME}`,`${process.env.TEST_PASSWORD}`);
+  await expect(page.getByRole('heading', { name: 'Tester Hotel Overview' })).toBeVisible();
+  await dashboardPage.performLogout();
+  await expect(page.getByRole('heading', { name: 'Login' })).toBeVisible(); 
+
+
+
+    // const dashboardPage = new DashboardPage(page);
+    // await expect(
+    //     page.getByRole("heading", { name: "Tester Hotel Overview" }),
+    // ).toBeVisible();
+    // await dashboardPage.performLogout();
+    // await expect(page.getByRole("heading", { name: "Login" })).toBeVisible();
+    // await page.waitForTimeout(5000);
       });
 
 // Testcase med fakerjs room
 test("Test case 02, create room", async ({ page }) => {
-    await expect(
-      page.getByRole("heading", { name: "Tester Hotel Overview" }),
-    ).toBeVisible();
+  const roomPage = new RoomPage(page); 
+  const roomData = generateRoomData();
 
-    const roomData = generateRoomData();
-    console.log('roomnumber', roomData.roomnumber);
-    console.log('floornumber', roomData.floornumber);
-    console.log('roomavailable', roomData.roomavailable);
-    console.log('roomprice', roomData.roomprice);
-    console.log('roomcategory', roomData.roomcategory);
-    console.log('roomfeatures', roomData.roomfeatures);
-
-    // click on button room
+  await expect(page.getByRole("heading", { name: "Tester Hotel Overview" })).toBeVisible();
   await page.locator("#app > div > div > div:nth-child(1) > a").click();
 
-  // Count number of rooms
+  await roomPage.createRoom(roomData);
+}); 
+
+  test("Test case 03, Verify that the data is correct", async ({ page }) => {
+    const roomPage = new RoomPage(page); 
+    const roomData = generateRoomData();
+
+    await expect(page.getByRole("heading", { name: "Tester Hotel Overview" })).toBeVisible();
+    await page.locator("#app > div > div > div:nth-child(1) > a").click();
+
+
+  // Verify that the data is correct
   const items = page.locator('[class="card room"]');
   const itemCount = await items.count();
-  console.log("Items", itemCount);
 
-  // Create Room
-  await page.getByRole("link", { name: "Create Room" }).click();
-  await expect(page.getByText("New Room")).toBeVisible();
-  await expect(
-    page.locator("label").filter({ hasText: /^Category$/ }),
-  ).toBeVisible();
-  await page.getByRole("combobox").selectOption(roomData.roomcategory);
-  await page.locator("div").filter({ hasText: /^Number$/ }).getByRole("spinbutton").fill(String(roomData.roomnumber));
-  await page.locator("div").filter({ hasText: /^Floor$/ }).getByRole("spinbutton").fill(String(roomData.floornumber));
-  if (roomData.roomavailable) {
-    await page.locator(".checkbox").click();
-}
-  await page.locator("div").filter({ hasText: /^Price$/ }).getByRole("spinbutton").fill(String(roomData.roomprice));
-  await page.getByRole("listbox").selectOption(roomData.roomfeatures);
-  await page.getByText("Save").click();
-  await expect(page.getByRole("heading", { name: "Rooms" })).toBeVisible();
+  await expect(itemCount).toBeGreaterThan(0);
+  const lastRoom = items.nth(itemCount - 1);
+  await expect(lastRoom).toContainText(`Floor ${roomData.floornumber}`);
+  await expect(lastRoom).toContainText(`Room ${roomData.roomnumber}`);
+});
 
-  // Count rooms after adding a room
-  const itemCountafter = await items.count();
-  expect(itemCountafter).toEqual(itemCount + 1);
 
-  // Check that information is correct
-  const textinformation = "Floor "+ String(roomData.floornumber)+", Room "+String(roomData.roomnumber);
+//     await expect(
+//       page.getByRole("heading", { name: "Tester Hotel Overview" }),
+//     ).toBeVisible();
 
-  await expect(
-    items.nth(itemCountafter - 1).locator(`text=${textinformation}`)).toBeVisible();
-  await expect(
-    items
-      .nth(itemCountafter - 1)
-    .locator(`h3:has-text("${textinformation}")`),
-  ).toBeVisible();
-  });
+//     const roomData = generateRoomData();
+//     console.log('roomnumber', roomData.roomnumber);
+//     console.log('floornumber', roomData.floornumber);
+//     console.log('roomavailable', roomData.roomavailable);
+//     console.log('roomprice', roomData.roomprice);
+//     console.log('roomcategory', roomData.roomcategory);
+//     console.log('roomfeatures', roomData.roomfeatures);
+
+//     // click on button room
+//   await page.locator("#app > div > div > div:nth-child(1) > a").click();
+
+//   // Count number of rooms
+//   const items = page.locator('[class="card room"]');
+//   const itemCount = await items.count();
+//   console.log("Items", itemCount);
+
+//   // Create Room
+//   await page.getByRole("link", { name: "Create Room" }).click();
+//   await expect(page.getByText("New Room")).toBeVisible();
+//   await expect(
+//     page.locator("label").filter({ hasText: /^Category$/ }),
+//   ).toBeVisible();
+//   await page.getByRole("combobox").selectOption(roomData.roomcategory);
+//   await page.locator("div").filter({ hasText: /^Number$/ }).getByRole("spinbutton").fill(String(roomData.roomnumber));
+//   await page.locator("div").filter({ hasText: /^Floor$/ }).getByRole("spinbutton").fill(String(roomData.floornumber));
+//   if (roomData.roomavailable) {
+//     await page.locator(".checkbox").click();
+// }
+//   await page.locator("div").filter({ hasText: /^Price$/ }).getByRole("spinbutton").fill(String(roomData.roomprice));
+//   await page.getByRole("listbox").selectOption(roomData.roomfeatures);
+//   await page.getByText("Save").click();
+//   await expect(page.getByRole("heading", { name: "Rooms" })).toBeVisible();
+
+//   // Count rooms after adding a room
+//   const itemCountafter = await items.count();
+//   expect(itemCountafter).toEqual(itemCount + 1);
+
+//   // Check that information is correct
+//   const textinformation = "Floor "+ String(roomData.floornumber)+", Room "+String(roomData.roomnumber);
+
+//   await expect(
+//     items.nth(itemCountafter - 1).locator(`text=${textinformation}`)).toBeVisible();
+//   await expect(
+//     items
+//       .nth(itemCountafter - 1)
+//     .locator(`h3:has-text("${textinformation}")`),
+//   ).toBeVisible();
+//   });
 
   // Create client with faker js
-test("Test case 03, create client", async ({ page }) => {
+test("Test case xxxx, create client", async ({ page }) => {
   const clientdata = generateClientData();
 
   await expect(
@@ -264,6 +305,5 @@ test.afterEach('Teardown', async ({page}) => {
     console.log('No page to close');
   }
 });
-
 
 });

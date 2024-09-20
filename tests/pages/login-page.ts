@@ -26,11 +26,13 @@ export class LoginPage {
   }
 
   async performLogin(username: string, password: string): Promise<void> {
+    // fill out the form - 2 textfields and click the sumbit button
     // console.log("Perform login");
     // console.log("username", username); // To see that is working as it should
     await this.usernameTextfield.fill(username);
     await this.passwordTextfield.fill(password);
     await this.loginButton.click();
+    
   }
 
   
