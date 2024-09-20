@@ -28,7 +28,7 @@ export class ClientPage{
         const clientData = generateClientData();
         console.log(clientData);
         
-        // Click on create room -button
+        // Click on create client -button
           await this.page.getByRole("link", { name: "Create Client" }).click();
           await this.page.waitForSelector("text=New Client");
         //   add clientdata

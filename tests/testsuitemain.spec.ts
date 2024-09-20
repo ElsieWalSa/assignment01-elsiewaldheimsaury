@@ -10,7 +10,7 @@ import { generateClientData } from "./testdata";
 import { test, expect, Page } from '@playwright/test';
 import { BillPage } from "./pages/BillPage";
 import { ReservationPage } from "./pages/ReservationPage";
-
+import { CounterPage } from "./pages/CounterPage";
 
 test.describe("Test suite main", () => {
     // let page: Page | undefined; // Declares the page and set it to unddefined
@@ -45,7 +45,7 @@ test("Test case 02, create room", async ({ page }) => {
   await roomPage.createRoom(roomData);
 }); 
 
-  test("Test case 03, Verify that the data is correct", async ({ page }) => {
+  test("Test case 03, Verify that the create data is correct", async ({ page }) => {
     const roomPage = new RoomPage(page); 
     const roomData = generateRoomData();
 
@@ -65,6 +65,7 @@ test("Test case 02, create room", async ({ page }) => {
 test("Test case 04, count clients", async ({ page }) => {
   const clientPage = new ClientPage(page);
   const clientData = generateClientData();
+  const counterPage = new CounterPage(page);
 
   await expect(
     page.getByRole("heading", { name: "Tester Hotel Overview" }),
@@ -74,10 +75,7 @@ test("Test case 04, count clients", async ({ page }) => {
   await page.locator("#app > div > div > div:nth-child(2) > a").click();
   await expect(page.getByText("Clients")).toBeVisible();
 
-  // Count number of clients
-  const items = page.locator('[class="card client"]');
-  const itemCount = await items.count();
-  console.log("Items", itemCount);
+  await counterPage.countClient();
 });
 
 test("Test case 05, create clients", async ({ page }) => {
@@ -239,7 +237,7 @@ test("Test case 06, count client after adding a client", async ({ page }) => {
     // click on bills view
     await page.locator("#app > div > div > div:nth-child(4) > a").click();
     await reservationPage.createReservation(ReservationData);
-    
+
   });
  
  
