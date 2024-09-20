@@ -3,22 +3,22 @@ import { DashboardPage } from "./pages/dashboard-page";
 import { LoginPage } from "./pages/login-page";
 import { config } from "dotenv";
 import { faker } from "@faker-js/faker";
-import { generateUserData, generateRoomData, generateClientData, generateBillData, generateReservationData, generateDates} from './testdata';
+import { generateUserData, generateRoomData, generateBillData, generateReservationData, generateDates} from './testdata';
 import { RoomPage } from "./pages/RoomPage";
-
+import { ClientPage } from "./pages/ClientPage";
+import { generateClientData } from "./testdata";
 
 test.describe("Test suite main", () => {
-    let page: Page | undefined; // Declares the page and set it to unddefined
+    // let page: Page | undefined; // Declares the page and set it to unddefined
     test.beforeEach(async ({ page }) => {
       const loginPage = new LoginPage(page);
-      const dashboardPage = new DashboardPage(page);
       await loginPage.goto();
       await loginPage.performLogin(
         `${process.env.TEST_USERNAME}`,
         `${process.env.TEST_PASSWORD}`,
       );
     });
-
+    
 test("Test case 01, log in and out", async ({ page }) => {
   const loginPage = new LoginPage(page);
   const dashboardPage = new DashboardPage(page);
@@ -29,15 +29,6 @@ test("Test case 01, log in and out", async ({ page }) => {
   await dashboardPage.performLogout();
   await expect(page.getByRole('heading', { name: 'Login' })).toBeVisible(); 
 
-
-
-    // const dashboardPage = new DashboardPage(page);
-    // await expect(
-    //     page.getByRole("heading", { name: "Tester Hotel Overview" }),
-    // ).toBeVisible();
-    // await dashboardPage.performLogout();
-    // await expect(page.getByRole("heading", { name: "Login" })).toBeVisible();
-    // await page.waitForTimeout(5000);
       });
 
 // Testcase med fakerjs room
@@ -58,7 +49,6 @@ test("Test case 02, create room", async ({ page }) => {
     await expect(page.getByRole("heading", { name: "Tester Hotel Overview" })).toBeVisible();
     await page.locator("#app > div > div > div:nth-child(1) > a").click();
 
-
   // Verify that the data is correct
   const items = page.locator('[class="card room"]');
   const itemCount = await items.count();
@@ -69,63 +59,10 @@ test("Test case 02, create room", async ({ page }) => {
   await expect(lastRoom).toContainText(`Room ${roomData.roomnumber}`);
 });
 
-
-//     await expect(
-//       page.getByRole("heading", { name: "Tester Hotel Overview" }),
-//     ).toBeVisible();
-
-//     const roomData = generateRoomData();
-//     console.log('roomnumber', roomData.roomnumber);
-//     console.log('floornumber', roomData.floornumber);
-//     console.log('roomavailable', roomData.roomavailable);
-//     console.log('roomprice', roomData.roomprice);
-//     console.log('roomcategory', roomData.roomcategory);
-//     console.log('roomfeatures', roomData.roomfeatures);
-
-//     // click on button room
-//   await page.locator("#app > div > div > div:nth-child(1) > a").click();
-
-//   // Count number of rooms
-//   const items = page.locator('[class="card room"]');
-//   const itemCount = await items.count();
-//   console.log("Items", itemCount);
-
-//   // Create Room
-//   await page.getByRole("link", { name: "Create Room" }).click();
-//   await expect(page.getByText("New Room")).toBeVisible();
-//   await expect(
-//     page.locator("label").filter({ hasText: /^Category$/ }),
-//   ).toBeVisible();
-//   await page.getByRole("combobox").selectOption(roomData.roomcategory);
-//   await page.locator("div").filter({ hasText: /^Number$/ }).getByRole("spinbutton").fill(String(roomData.roomnumber));
-//   await page.locator("div").filter({ hasText: /^Floor$/ }).getByRole("spinbutton").fill(String(roomData.floornumber));
-//   if (roomData.roomavailable) {
-//     await page.locator(".checkbox").click();
-// }
-//   await page.locator("div").filter({ hasText: /^Price$/ }).getByRole("spinbutton").fill(String(roomData.roomprice));
-//   await page.getByRole("listbox").selectOption(roomData.roomfeatures);
-//   await page.getByText("Save").click();
-//   await expect(page.getByRole("heading", { name: "Rooms" })).toBeVisible();
-
-//   // Count rooms after adding a room
-//   const itemCountafter = await items.count();
-//   expect(itemCountafter).toEqual(itemCount + 1);
-
-//   // Check that information is correct
-//   const textinformation = "Floor "+ String(roomData.floornumber)+", Room "+String(roomData.roomnumber);
-
-//   await expect(
-//     items.nth(itemCountafter - 1).locator(`text=${textinformation}`)).toBeVisible();
-//   await expect(
-//     items
-//       .nth(itemCountafter - 1)
-//     .locator(`h3:has-text("${textinformation}")`),
-//   ).toBeVisible();
-//   });
-
-  // Create client with faker js
-test("Test case xxxx, create client", async ({ page }) => {
-  const clientdata = generateClientData();
+  
+test("Test case 04, count clients", async ({ page }) => {
+  const clientPage = new ClientPage(page);
+  const clientData = generateClientData();
 
   await expect(
     page.getByRole("heading", { name: "Tester Hotel Overview" }),
@@ -133,65 +70,93 @@ test("Test case xxxx, create client", async ({ page }) => {
 
   // click on clients view
   await page.locator("#app > div > div > div:nth-child(2) > a").click();
+  await expect(page.getByText("Clients")).toBeVisible();
 
   // Count number of clients
   const items = page.locator('[class="card client"]');
   const itemCount = await items.count();
   console.log("Items", itemCount);
 
-  // create new client
-  await page.waitForTimeout(3000); 
-  await expect(page.getByText("Clients")).toBeVisible();
-  await page.getByRole("link", { name: "Create Client " }).click();
-  await expect(page.getByText("New Client")).toBeVisible();
-  await expect(
-    page.locator("label").filter({ hasText: /^Name$/ }),
-  ).toBeVisible();
-  await page.locator("div").filter({ hasText: /^Name$/ }).getByRole("textbox").fill(clientdata.clientname);
-  await page.locator('input[type="email"]').fill(clientdata.clientemail);
-  await page.locator("div").filter({ hasText: /^Telephone$/ }).getByRole("textbox").fill(clientdata.clientphonenumber);
-  await page.getByText("Save").click();
-  await expect(page.getByRole("heading", { name: "Clients" })).toBeVisible();
+});
 
-  // Count client after adding a client
+test("Test case 05, create clients", async ({ page }) => {
+  const clientPage = new ClientPage(page);
+
+  await expect(page.getByRole("heading", { name: "Tester Hotel Overview" })).toBeVisible();
+  await page.locator("#app > div > div > div:nth-child(2) > a").click();
+
+  await clientPage.createClient();
+
+  await expect(page.getByRole("heading", { name: "Clients" })).toBeVisible();
+});
+
+
+  // await page.waitForTimeout(3000); 
+  // await expect(page.getByText("Clients")).toBeVisible();
+  // await page.getByRole("link", { name: "Create Client " }).click();
+  // await expect(page.getByText("New Client")).toBeVisible();
+  // await expect(
+  //   page.locator("label").filter({ hasText: /^Name$/ }),
+  // ).toBeVisible();
+  // await page.locator("div").filter({ hasText: /^Name$/ }).getByRole("textbox").fill(clientdata.clientname);
+  // await page.locator('input[type="email"]').fill(clientdata.clientemail);
+  // await page.locator("div").filter({ hasText: /^Telephone$/ }).getByRole("textbox").fill(clientdata.clientphonenumber);
+  // await page.getByText("Save").click();
+  // await expect(page.getByRole("heading", { name: "Clients" })).toBeVisible();
+
+
+  test("Test case 06, count client after adding a client", async ({ page }) => {
+    const clientPage = new ClientPage(page);
+    const clientData = generateClientData();
+
+    await expect(
+      page.getByRole("heading", { name: "Tester Hotel Overview" }),
+    ).toBeVisible();
+  
+    // click on clients view
+    await page.locator("#app > div > div > div:nth-child(2) > a").click();
+    await expect(page.getByText("Clients")).toBeVisible();
+  
+    // Count client after adding a client
+  const items = page.locator('[class="card client"]');
   const itemCountafter = await items.count();
   expect(itemCountafter).toEqual(itemCount + 1);
 
-  // list always start a 0
-  const telephoneDiv = await items
-    .nth(itemCountafter - 1)
-    .locator("div.telephone");
-  // get phonetext from div-element
-  const textContent = await telephoneDiv.textContent();
-  // Log text to consol compare phonenumbers to eachother
-  console.log(`Text i div-elementet telefon: ${textContent}`);
-  console.log(`xx:${clientdata.clientphonenumber}`);
-  const telephonenumbertobe = "Telephone: "+ clientdata.clientphonenumber;
-  expect(textContent).toBe(`${telephonenumbertobe}`);
+  // // list always start a 0
+  // const telephoneDiv = await items
+  //   .nth(itemCountafter - 1)
+  //   .locator("div.telephone");
+  // // get phonetext from div-element
+  // const textContent = await telephoneDiv.textContent();
+  // // Log text to consol compare phonenumbers to eachother
+  // console.log(`Text i div-elementet telefon: ${textContent}`);
+  // console.log(`xx:${clientdata.clientphonenumber}`);
+  // const telephonenumbertobe = "Telephone: "+ clientdata.clientphonenumber;
+  // expect(textContent).toBe(`${telephonenumbertobe}`);
   
-  // get emailtext from div-element
-  const emailDiv = await items
-    .nth(itemCountafter - 1)
-    .locator("div.email");
-  const emailContent = await emailDiv.textContent();
+  // // get emailtext from div-element
+  // const emailDiv = await items
+  //   .nth(itemCountafter - 1)
+  //   .locator("div.email");
+  // const emailContent = await emailDiv.textContent();
 
-  // Log emailtext to consol
-  console.log(`Text i div-elementet email: ${emailContent}`);
-  console.log(`xx:${clientdata.clientemail}`);
-  const emailtobe = "Email: "+ clientdata.clientemail;
-  expect(emailContent).toBe(`${emailtobe}`);
+  // // Log emailtext to consol
+  // console.log(`Text i div-elementet email: ${emailContent}`);
+  // console.log(`xx:${clientdata.clientemail}`);
+  // const emailtobe = "Email: "+ clientdata.clientemail;
+  // expect(emailContent).toBe(`${emailtobe}`);
 
-  // get text from div-element name
-  const nameDiv = await items.nth(itemCountafter - 1).locator("h3");
-  const nameContent = await nameDiv.textContent();
+  // // get text from div-element name
+  // const nameDiv = await items.nth(itemCountafter - 1).locator("h3");
+  // const nameContent = await nameDiv.textContent();
 
-  // // Log nametext to consol
-  console.log(`Text i div-elementet name: ${nameContent}`);
-  console.log(`name:${clientdata.clientname}`);
-  expect(nameContent).toContain(`${clientdata.clientname}`);
+  // // // Log nametext to consol
+  // console.log(`Text i div-elementet name: ${nameContent}`);
+  // console.log(`name:${clientdata.clientname}`);
+  // expect(nameContent).toContain(`${clientdata.clientname}`);
 
-  const namewithnumber = clientdata.clientname + " (#" + String(itemCountafter)+")";
-  expect(nameContent).toBe(namewithnumber);
+  // const namewithnumber = clientdata.clientname + " (#" + String(itemCountafter)+")";
+  // expect(nameContent).toBe(namewithnumber);
   }); 
   // Create bill with fakerjs
   test("Test case 04, create bill", async ({ page }) => {

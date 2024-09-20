@@ -28,19 +28,10 @@ export class RoomPage {
           await this.page.locator("div").filter({ hasText: /^Price$/ }).getByRole("spinbutton").fill(String(roomData.roomprice));
           await this.page.getByRole("listbox").selectOption(roomData.roomfeatures);
           
-          // Click on svae for saving the room
+          // Click on save for saving the room
           await this.page.getByText("Save").click();
         }
       }
     
 
-    //   await this.roomForm.getByRole("combobox").selectOption(roomData.roomcategory);
-    //   await this.roomForm.locator("div", { hasText: "Number" }).getByRole("spinbutton").fill(String(roomData.roomnumber));
-    //   await this.roomForm.locator("div", { hasText: "Floor" }).getByRole("spinbutton").fill(String(roomData.floornumber));
-    //   await this.roomForm.locator("div", { hasText: "Price" }).getByRole("spinbutton").fill(String(roomData.roomprice));
-    //   if (roomData.roomavailable) {
-    //     await this.roomForm.locator(".checkbox").click();
-    //   }
-    //   await this.roomForm.getByText("Save").click();
-//     }
-//   }
+    
