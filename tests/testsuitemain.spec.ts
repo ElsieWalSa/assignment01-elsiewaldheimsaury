@@ -9,6 +9,7 @@ import { ClientPage } from "./pages/ClientPage";
 import { generateClientData } from "./testdata";
 import { test, expect, Page } from '@playwright/test';
 import { BillPage } from "./pages/BillPage";
+import { ReservationPage } from "./pages/ReservationPage";
 
 
 test.describe("Test suite main", () => {
@@ -171,7 +172,6 @@ test("Test case 06, count client after adding a client", async ({ page }) => {
 
 //   });
   
-  // Create bill with fakerjs
   test("Test case 08, create bill", async ({ page }) => {
     const billPage = new BillPage(page);
     const BillData = generateBillData();
@@ -188,6 +188,10 @@ test("Test case 06, count client after adding a client", async ({ page }) => {
     console.log("Items before", itemCount);
   });
 
+  test("Test case 09, verify billdata", async ({ page }) => {
+  
+  
+  });
 
   // test("Test case 04, create bill", async ({ page }) => {
   //   const clientbill = generateBillData();
@@ -204,17 +208,7 @@ test("Test case 06, count client after adding a client", async ({ page }) => {
   //   const itemCount = await items.count();
   //   console.log("Items before", itemCount);
 
-    // create new bill
-  // await expect(page.getByText("Bills")).toBeVisible();
-  // await page.getByRole("link", { name: "Create Bill" }).click();
-  // await expect(page.getByText("New Bill")).toBeVisible();
-  // await expect(page.getByText("Value")).toBeVisible();
-  // await page.getByRole("spinbutton").fill(String(clientbill.billvalue));
-  // if (clientbill.billclick) {
-  //   await page.locator(".checkbox").click();
-  // }
-  // await page.getByText('Save').click();
-  // await expect(page.getByRole("heading", { name: "Bills" })).toBeVisible();
+  
 
   // // Check if the information is correct, count all the bills after adding a bill 
   // const itemCountafter = await items.count();
@@ -235,6 +229,22 @@ test("Test case 06, count client after adding a client", async ({ page }) => {
   // expect(paidDiv).toContainText('No');
   
   // });
+ 
+  test("Test case 10, create a reservation", async ({ page }) => {
+    const reservationPage = new ReservationPage(page);
+    const ReservationData = generateReservationData();
+    
+    await expect(page.getByRole("heading", { name: "Tester Hotel Overview" }),).toBeVisible();
+
+    // click on bills view
+    await page.locator("#app > div > div > div:nth-child(4) > a").click();
+    await reservationPage.createReservation(ReservationData);
+    
+  });
+ 
+ 
+ 
+ 
   // Do a reservation and check if the information is correct
 test("Test case 05, create a reservation", async ({page}) => {
   const reservationdata = generateReservationData ();
@@ -257,35 +267,35 @@ test("Test case 05, create a reservation", async ({page}) => {
   console.log("Items", itemCount);
 
   // Do a new reservation
-  await page.waitForTimeout(3000); 
-  await expect(page.getByText("Reservations")).toBeVisible();
-  await page.getByRole("link", { name: "Create Reservation" }).click();
-  await expect(page.getByText("New Reservation")).toBeVisible();
-  await expect(page.getByText("Start")).toBeVisible();
-  await page.locator("div").filter({ hasText: /^Start \(Format YYYY-MM-DD\)$/ }).getByPlaceholder("YYYY-MM-DD").fill(String(reservationdata.reservationStart));
-  await page.locator("div").filter({ hasText: /^End \(Format YYYY-MM-DD\)$/ }).getByPlaceholder("YYYY-MM-DD").fill(String(reservationdata.reservationEnd));
+  // await page.waitForTimeout(3000); 
+  // await expect(page.getByText("Reservations")).toBeVisible();
+  // await page.getByRole("link", { name: "Create Reservation" }).click();
+  // await expect(page.getByText("New Reservation")).toBeVisible();
+  // await expect(page.getByText("Start")).toBeVisible();
+  // await page.locator("div").filter({ hasText: /^Start \(Format YYYY-MM-DD\)$/ }).getByPlaceholder("YYYY-MM-DD").fill(String(reservationdata.reservationStart));
+  // await page.locator("div").filter({ hasText: /^End \(Format YYYY-MM-DD\)$/ }).getByPlaceholder("YYYY-MM-DD").fill(String(reservationdata.reservationEnd));
   
 // slumpa inom det som finns i listorna - är ett tal som finns i listan
-  await page.waitForTimeout(3000); 
-	await page.getByRole("combobox").first().waitFor({ state: 'attached' });
-  await page.getByRole("combobox").first().selectOption(String(reservationdata.reservationclient));
-  await page.waitForTimeout(3000); 
-  await page.getByRole("combobox").nth(1).waitFor({ state: 'attached' });
-  await page.getByRole("combobox").nth(1).selectOption(String(reservationdata.reservationroom));
-  await page.waitForTimeout(3000); 
-	await page.getByRole("combobox").nth(2).waitFor({ state: 'attached' });
-  await page.getByRole("combobox").nth(2).selectOption(String(reservationdata.reservationbill));
-  await page.waitForTimeout(3000); 
-  await page.getByText("Save").waitFor({ state: 'visible' });
-  await page.getByText("Save").click();
-	await page.waitForSelector('text="Reservations"');
-	await expect(page.getByText("Reservations" )).toBeVisible();
+  // await page.waitForTimeout(3000); 
+	// await page.getByRole("combobox").first().waitFor({ state: 'attached' });
+  // await page.getByRole("combobox").first().selectOption(String(reservationdata.reservationclient));
+  // await page.waitForTimeout(3000); 
+  // await page.getByRole("combobox").nth(1).waitFor({ state: 'attached' });
+  // await page.getByRole("combobox").nth(1).selectOption(String(reservationdata.reservationroom));
+  // await page.waitForTimeout(3000); 
+	// await page.getByRole("combobox").nth(2).waitFor({ state: 'attached' });
+  // await page.getByRole("combobox").nth(2).selectOption(String(reservationdata.reservationbill));
+  // await page.waitForTimeout(3000); 
+  // await page.getByText("Save").waitFor({ state: 'visible' });
+  // await page.getByText("Save").click();
+	// await page.waitForSelector('text="Reservations"');
+	// await expect(page.getByText("Reservations" )).toBeVisible();
 
-  // Count reservations after adding a new reservation, to see that they match
-  const itemsafter = page.locator('[class="card reservation card"]');
-  const itemCountafter = await itemsafter.count();
-  expect(itemCountafter).toEqual(itemCount + 1);
-  console.log("itemsafter",itemCountafter);
+  // // Count reservations after adding a new reservation, to see that they match
+  // const itemsafter = page.locator('[class="card reservation card"]');
+  // const itemCountafter = await itemsafter.count();
+  // expect(itemCountafter).toEqual(itemCount + 1);
+  // console.log("itemsafter",itemCountafter);
   
 });
 

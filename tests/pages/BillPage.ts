@@ -13,11 +13,9 @@ export class BillPage {
 
   async createBill(BillData: { billvalue: number; billclick: boolean }) {
     // Click on "Create Bill" button
-    await this.createBillButton.click();
-    
-    // Wait until the form is visible
+    await this.page.getByRole('link', { name: 'Create Bill' }).click();
     await this.page.waitForSelector("text=New Bill");
-
+    
     // Fill in the bill value
     await expect(this.page.getByText("Value")).toBeVisible();
     await this.page.getByRole("spinbutton").fill(String(BillData.billvalue));
