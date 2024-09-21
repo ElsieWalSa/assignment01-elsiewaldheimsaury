@@ -7,20 +7,16 @@ export class CounterPage {
     constructor(page: Page) {
       this.page = page;
     }
-    async countClient() {
-        const clientData = generateClientData();
-        console.log(clientData);
-        
-        // Click on create client -button
-        //   await this.page.getByRole("link", { name: "Create Client" }).click();
-          
-        //   count clients - se över 
-        const items = this.page.locator('[class="card client"]');
-        const itemCountafter = await items.count();
-        expect(itemCountafter).toEqual(itemCount + 1);
-        console.log("Items", itemCount);
-    
+    async createClient(clientData: any): Promise<void> {
+      console.log(clientData);
 
+      // Click on create client -button
+      await this.page.getByRole("link", { name: "Create Client" }).click();
 
-    }  
+      
+      await this.page.fill('input[name="clientName"]', clientData.name);
+      await this.page.fill('input[name="clientEmail"]', clientData.email);
+      await this.page.click('button[type="submit"]');
+  }
 }
+    

@@ -73,21 +73,34 @@ test("Test case 04, count clients", async ({ page }) => {
 
   // click on clients view
   await page.locator("#app > div > div > div:nth-child(2) > a").click();
-  await expect(page.getByText("Clients")).toBeVisible();
 
-  await counterPage.countClient();
+  await counterPage.countClients();
+  
 });
 
-test("Test case 05, create clients", async ({ page }) => {
+test("Test case 05, create clients and count", async ({ page }) => {
   const clientPage = new ClientPage(page);
+  const counterPage = new CounterPage(page);
 
   await expect(page.getByRole("heading", { name: "Tester Hotel Overview" })).toBeVisible();
   await page.locator("#app > div > div > div:nth-child(2) > a").click();
+  // count clients before
+  const firstValueofClients = await counterPage.countClients();
 
   await clientPage.createClient();
 
+
   await expect(page.getByRole("heading", { name: "Clients" })).toBeVisible();
+
+  // Count client after addinge one
+  const lastValueofClients = await counterPage.countClients()
+
+
+  await expect(lastValueofClients-firstValueofClients).toBe(1);
+  console.log(lastValueofClients-firstValueofClients);
 });
+
+
 
 
   // await page.waitForTimeout(3000); 
@@ -103,23 +116,46 @@ test("Test case 05, create clients", async ({ page }) => {
   // await page.getByText("Save").click();
   // await expect(page.getByRole("heading", { name: "Clients" })).toBeVisible();
 
-test("Test case 06, count client after adding a client", async ({ page }) => {
-    const clientPage = new ClientPage(page);
-    const clientData = generateClientData();
+// test("Test case 06, count client after adding a client", async ({ page }) => {
+//     const clientPage = new ClientPage(page);
+//     const clientData = generateClientData();
+//     const counterPage = new CounterPage(page);
+    
 
-    await expect(
-      page.getByRole("heading", { name: "Tester Hotel Overview" }),
-    ).toBeVisible();
+//     await expect(
+//       page.getByRole("heading", { name: "Tester Hotel Overview" }),
+//     ).toBeVisible();
+
+//     // click on clients view
+//     await page.locator("#app > div > div > div:nth-child(2) > a").click();
+//     // await expect(page.getByText("Clients")).toBeVisible();
+
+//     await counterPage.countClients();
+//     const firstValueofClients = await counterPage.countClients();
+//     const lastValueofClients = 
+
+
+
+//     //  count clients after
+//     const clientCountAfter = await clientPage.getClientCount();
+//     console.log("clients after adding one:", clientCountAfter);
+
+    // Kontrollera att klientantalet har ökat med 1
+    // expect(clientCountAfter).toEqual(clientCountBefore + 1);
+
+
+
   
-    // click on clients view
-    await page.locator("#app > div > div > div:nth-child(2) > a").click();
-    await expect(page.getByText("Clients")).toBeVisible();
+  //   // click on clients view
+  //   await page.locator("#app > div > div > div:nth-child(2) > a").click();
+  //   await expect(page.getByText("Clients")).toBeVisible();
   
-    // Count client after adding a client
-  const items = page.locator('[class="card client"]');
-  const itemCountafter = await items.count();
+  //   // Count client after adding a client
+  // const items = page.locator('[class="card client"]');
+  // const itemCountafter = await items.count();
   // expect(itemCountafter).toEqual(itemCount + 1);
-});
+
+
 
 
 // test("Test case 07, verify client data", async ({ page }) => {
@@ -170,7 +206,7 @@ test("Test case 06, count client after adding a client", async ({ page }) => {
 
 //   });
   
-  test("Test case 08, create bill", async ({ page }) => {
+  test("Test case 06, create bill", async ({ page }) => {
     const billPage = new BillPage(page);
     const BillData = generateBillData();
     
@@ -186,7 +222,7 @@ test("Test case 06, count client after adding a client", async ({ page }) => {
     console.log("Items before", itemCount);
   });
 
-  test("Test case 09, verify billdata", async ({ page }) => {
+  test("Test case 07, verify billdata", async ({ page }) => {
   
   
   });
@@ -227,8 +263,14 @@ test("Test case 06, count client after adding a client", async ({ page }) => {
   // expect(paidDiv).toContainText('No');
   
   // });
+  test("Test case 08, count a reservation", async ({ page }) => {
+
+
+
+
+  });
  
-  test("Test case 10, create a reservation", async ({ page }) => {
+  test("Test case 09, create a reservation", async ({ page }) => {
     const reservationPage = new ReservationPage(page);
     const ReservationData = generateReservationData();
     
@@ -241,10 +283,8 @@ test("Test case 06, count client after adding a client", async ({ page }) => {
   });
  
  
- 
- 
   // Do a reservation and check if the information is correct
-test("Test case 05, create a reservation", async ({page}) => {
+test("Test case 10, check if reservation is correct", async ({page}) => {
   const reservationdata = generateReservationData ();
   console.log("startar här",reservationdata.reservationStart);
 

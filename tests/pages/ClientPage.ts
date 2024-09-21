@@ -1,6 +1,9 @@
 import { Page, Locator, expect } from "@playwright/test";
 import { generateClientData } from "../testdata";
 export class ClientPage{
+    getClientCount() {
+      throw new Error("Method not implemented.");
+    }
     getItemCount(): number | PromiseLike<number> {
       throw new Error("Method not implemented.");
     }
