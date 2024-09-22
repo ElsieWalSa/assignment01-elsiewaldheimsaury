@@ -12,10 +12,11 @@ import { generateClientData } from "./testdata";
 import { CounterPage } from "./pages/CounterPage";
 import { ClientPage } from "./pages/ClientPage";
 import { RoomPage } from "./pages/RoomPage";
+import { CountReservationPage } from "./pages/CountReservationPage";
+import { VerifyReservationPage } from "./pages/VerifyReservationPage";
 
 
 test.describe("Test suite main", () => {
-    // let page: Page | undefined; // Declares the page and set it to unddefined
     test.beforeEach(async ({ page }) => {
       const loginPage = new LoginPage(page);
       await loginPage.goto();
@@ -35,8 +36,6 @@ test("Test case 01, log in and out", async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Login' })).toBeVisible();
   });
 
-
-// Testcase med fakerjs room
 test("Test case 02, create room", async ({ page }) => {
   const roomPage = new RoomPage(page); 
   const roomData = generateRoomData();
@@ -102,112 +101,7 @@ test("Test case 05, create clients and count", async ({ page }) => {
   console.log(lastValueofClients-firstValueofClients);
 });
 
-
-
-
-  // await page.waitForTimeout(3000); 
-  // await expect(page.getByText("Clients")).toBeVisible();
-  // await page.getByRole("link", { name: "Create Client " }).click();
-  // await expect(page.getByText("New Client")).toBeVisible();
-  // await expect(
-  //   page.locator("label").filter({ hasText: /^Name$/ }),
-  // ).toBeVisible();
-  // await page.locator("div").filter({ hasText: /^Name$/ }).getByRole("textbox").fill(clientdata.clientname);
-  // await page.locator('input[type="email"]').fill(clientdata.clientemail);
-  // await page.locator("div").filter({ hasText: /^Telephone$/ }).getByRole("textbox").fill(clientdata.clientphonenumber);
-  // await page.getByText("Save").click();
-  // await expect(page.getByRole("heading", { name: "Clients" })).toBeVisible();
-
-// test("Test case 06, count client after adding a client", async ({ page }) => {
-//     const clientPage = new ClientPage(page);
-//     const clientData = generateClientData();
-//     const counterPage = new CounterPage(page);
     
-
-//     await expect(
-//       page.getByRole("heading", { name: "Tester Hotel Overview" }),
-//     ).toBeVisible();
-
-//     // click on clients view
-//     await page.locator("#app > div > div > div:nth-child(2) > a").click();
-//     // await expect(page.getByText("Clients")).toBeVisible();
-
-//     await counterPage.countClients();
-//     const firstValueofClients = await counterPage.countClients();
-//     const lastValueofClients = 
-
-
-
-//     //  count clients after
-//     const clientCountAfter = await clientPage.getClientCount();
-//     console.log("clients after adding one:", clientCountAfter);
-
-    // Kontrollera att klientantalet har ökat med 1
-    // expect(clientCountAfter).toEqual(clientCountBefore + 1);
-
-
-
-  
-  //   // click on clients view
-  //   await page.locator("#app > div > div > div:nth-child(2) > a").click();
-  //   await expect(page.getByText("Clients")).toBeVisible();
-  
-  //   // Count client after adding a client
-  // const items = page.locator('[class="card client"]');
-  // const itemCountafter = await items.count();
-  // expect(itemCountafter).toEqual(itemCount + 1);
-
-
-
-
-// test("Test case 07, verify client data", async ({ page }) => {
-//   let itemCountBefore;
-//   const clientPage = new ClientPage(page);
-//   const clientData = generateClientData();
-  
-//   // list always start a 0
-//   const telephoneDiv = await items
-//     .nth(itemCountafter - 1)
-//     .locator("div.telephone");
-//   // get phonetext from div-element
-//   const textContent = await telephoneDiv.textContent();
-//   // Log text to consol compare phonenumbers to eachother
-//   // console.log(`Text i div-elementet telefon: ${textContent}`);
-//   // console.log(`xx:${clientData.clientphonenumber}`);
-//   // const telephonenumbertobe = "Telephone: "+ clientData.clientphonenumber;
-//   // expect(textContent).toBe(`${telephonenumbertobe}`);
-
-//   const telephoneDiv = await items.nth(itemCountAfter - 1).locator("div.telephone");
-//     const textContent = await telephoneDiv.textContent();
-//     const telephonenumbertobe = "Telephone: " + clientData.clientphonenumber;
-//     expect(textContent).toBe(telephonenumbertobe);
-
-//   // get emailtext from div-element
-//   const emailDiv = await items
-//     .nth(itemCountafter - 1)
-//     .locator("div.email");
-//   const emailContent = await emailDiv.textContent();
-
-//   // Log emailtext to consol
-//   console.log(`Text i div-elementet email: ${emailContent}`);
-//   console.log(`xx:${clientData.clientemail}`);
-//   const emailtobe = "Email: "+ clientData.clientemail;
-//   expect(emailContent).toBe(`${emailtobe}`);
-
-//   // get text from div-element name
-//   const nameDiv = await items.nth(itemCountafter - 1).locator("h3");
-//   const nameContent = await nameDiv.textContent();
-
-//   // // Log nametext to consol
-//   console.log(`Text i div-elementet name: ${nameContent}`);
-//   console.log(`name:${clientData.clientname}`);
-//   expect(nameContent).toContain(`${clientData.clientname}`);
-
-//   const namewithnumber = clientData.clientname + " (#" + String(itemCountafter)+")";
-//   expect(nameContent).toBe(namewithnumber);
-
-//   });
-  
   test("Test case 06, create bill", async ({ page }) => {
     const billPage = new BillPage(page);
     const BillData = generateBillData();
@@ -242,50 +136,22 @@ test("Test case 05, create clients and count", async ({ page }) => {
 
     // Control if bill is payed 
     const isBillClicked = true; 
-    // await billPage.verifyBillsAfterCreation(initialCount, isBillClicked);
  
   });
 
-
-  // test("Test case 04, create bill", async ({ page }) => {
-  //   const clientbill = generateBillData();
-
-  //   await expect(
-  //     page.getByRole("heading", { name: "Tester Hotel Overview" }),
-  //   ).toBeVisible();
-
-  //   // click on bills view
-  //   await page.locator("#app > div > div > div:nth-child(3) > a").click();
-
-  //   // Count number of bills
-  //   const items = page.locator('[class="card bill"]');
-  //   const itemCount = await items.count();
-  //   console.log("Items before", itemCount);
-
-  
-
-  // // Check if the information is correct, count all the bills after adding a bill 
-  // const itemCountafter = await items.count();
-  // expect(itemCountafter).toEqual(itemCount + 1);
-  // console.log("Items after", itemCountafter);
-
-  // // Count id, should be the same as the last element
-  // const idDiv = await items.nth(itemCountafter - 1).getByRole('heading').textContent();
-  // console.log('ID', idDiv)
-  // expect(idDiv).toContain(String(itemCountafter));
-  // expect(idDiv).toContain('ID: '+String(itemCountafter));
-
-  // // If bill paid or not
-  // const paidDiv = await items.nth(itemCountafter - 1).locator('[class="paid"]');
-  // if (clientbill.billclick) 
-  //   expect(paidDiv).toContainText('Yes');
-  // else
-  // expect(paidDiv).toContainText('No');
-  
-  // });
   test("Test case 08, count a reservation", async ({ page }) => {
+    const clientData = generateClientData();
+    const countReservationPage = new CountReservationPage(page);
 
-
+    await expect(
+      page.getByRole("heading", { name: "Tester Hotel Overview" }),
+    ).toBeVisible();
+  
+    // click on clients view
+    await page.locator("#app > div > div > div:nth-child(4) > a").click();
+    
+    // Count clients
+    await countReservationPage.countReservation();
 
 
   });
@@ -303,64 +169,30 @@ test("Test case 05, create clients and count", async ({ page }) => {
   });
 
  
- 
   // Do a reservation and check if the information is correct
-test("Test case 10, check if reservation is correct", async ({page}) => {
-  const reservationdata = generateReservationData ();
-  console.log("startar här",reservationdata.reservationStart);
+test("Test case 10, verify reservation", async ({page}) => {
+  const reservationdata = generateReservationData();
+    console.log("starts here", reservationdata.reservationStart);
+    console.log("ends here", reservationdata.reservationEnd);
+  
+    const retries = test.info().retry;
+    console.log(`This is retry number: ${retries}`);
+  
+    const verifyreservationPage = new VerifyReservationPage(page);
 
-  console.log("slutar här",reservationdata.reservationEnd);
-  const retries = test.info().retry;
-  console.log(`This is retry number: ${retries}`);
- 
-  await expect(
-    page.getByRole("heading", { name: "Tester Hotel Overview" }),
+    await expect(
+      page.getByRole("heading", { name: "Tester Hotel Overview" })
   ).toBeVisible();
 
-  // click on reservations view
-  await page.locator("#app > div > div > div:nth-child(4) > a").click();
+  await verifyreservationPage.navigateToReservations();
 
-  // Count number of reservations
-  const items = page.locator('[class="card reservation card"]');
-  const itemCount = await items.count();
+  const itemCount = await verifyreservationPage.countReservations();
   console.log("Items", itemCount);
+  
 
 });
 
-  // Do a new reservation
-  // await page.waitForTimeout(3000); 
-  // await expect(page.getByText("Reservations")).toBeVisible();
-  // await page.getByRole("link", { name: "Create Reservation" }).click();
-  // await expect(page.getByText("New Reservation")).toBeVisible();
-  // await expect(page.getByText("Start")).toBeVisible();
-  // await page.locator("div").filter({ hasText: /^Start \(Format YYYY-MM-DD\)$/ }).getByPlaceholder("YYYY-MM-DD").fill(String(reservationdata.reservationStart));
-  // await page.locator("div").filter({ hasText: /^End \(Format YYYY-MM-DD\)$/ }).getByPlaceholder("YYYY-MM-DD").fill(String(reservationdata.reservationEnd));
-  
-// slumpa inom det som finns i listorna - är ett tal som finns i listan
-  // await page.waitForTimeout(3000); 
-	// await page.getByRole("combobox").first().waitFor({ state: 'attached' });
-  // await page.getByRole("combobox").first().selectOption(String(reservationdata.reservationclient));
-  // await page.waitForTimeout(3000); 
-  // await page.getByRole("combobox").nth(1).waitFor({ state: 'attached' });
-  // await page.getByRole("combobox").nth(1).selectOption(String(reservationdata.reservationroom));
-  // await page.waitForTimeout(3000); 
-	// await page.getByRole("combobox").nth(2).waitFor({ state: 'attached' });
-  // await page.getByRole("combobox").nth(2).selectOption(String(reservationdata.reservationbill));
-  // await page.waitForTimeout(3000); 
-  // await page.getByText("Save").waitFor({ state: 'visible' });
-  // await page.getByText("Save").click();
-	// await page.waitForSelector('text="Reservations"');
-	// await expect(page.getByText("Reservations" )).toBeVisible();
-
-  // // Count reservations after adding a new reservation, to see that they match
-  // const itemsafter = page.locator('[class="card reservation card"]');
-  // const itemCountafter = await itemsafter.count();
-  // expect(itemCountafter).toEqual(itemCount + 1);
-  // console.log("itemsafter",itemCountafter);
-  
-
-// Göra en teardown i min data och logga ut och se att all data försvunnit
-// afterall - 
+// Teardown 
 test.afterEach('Teardown', async ({page}) => {
   await page.waitForTimeout(3000); 
   if (page) {  // control `page` 
