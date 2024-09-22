@@ -36,12 +36,5 @@ async createReservation(reservationData: any) {
     await this.page.getByText("Reservations" );
 
 
-
-
-
-    
-
-
-
 }
 }

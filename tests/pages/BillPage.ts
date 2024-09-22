@@ -1,6 +1,10 @@
 import { Page, Locator, expect } from "@playwright/test";
 
 export class BillPage {
+  verifyBillsAfterCreation(initialCount: void, isBillClicked: boolean) {
+    throw new Error("Method not implemented.");
+  }
+  
   readonly page: Page;
   readonly createBillButton: Locator;
   readonly billForm: Locator;

@@ -3,14 +3,16 @@ import { DashboardPage } from "./pages/dashboard-page";
 import { LoginPage } from "./pages/login-page";
 import { config } from "dotenv";
 import { faker } from "@faker-js/faker";
-import { generateUserData, generateRoomData, generateBillData, generateReservationData, generateDates} from './testdata';
-import { RoomPage } from "./pages/RoomPage";
-import { ClientPage } from "./pages/ClientPage";
-import { generateClientData } from "./testdata";
-import { test, expect, Page } from '@playwright/test';
+import { generateUserData, generateRoomData, generateBillData, generateReservationData, generateDates} from './testdata'; 
+import { CountBillPage } from "./pages/CountBillPage";
+import { Page, expect, test } from "@playwright/test";
 import { BillPage } from "./pages/BillPage";
 import { ReservationPage } from "./pages/ReservationPage";
+import { generateClientData } from "./testdata";
 import { CounterPage } from "./pages/CounterPage";
+import { ClientPage } from "./pages/ClientPage";
+import { RoomPage } from "./pages/RoomPage";
+
 
 test.describe("Test suite main", () => {
     // let page: Page | undefined; // Declares the page and set it to unddefined
@@ -222,10 +224,28 @@ test("Test case 05, create clients and count", async ({ page }) => {
     console.log("Items before", itemCount);
   });
 
-  test("Test case 07, verify billdata", async ({ page }) => {
-  
-  
+  test("Test case 07, create and verify billdata", async ({ page }) => {
+    const billPage = new BillPage(page);
+    const BillData = generateBillData();
+    const countBillPage = new CountBillPage(page); 
+
+    await expect(page.getByRole("heading", { name: "Tester Hotel Overview" }),).toBeVisible();
+
+    // click on bills view
+    await page.locator("#app > div > div > div:nth-child(3) > a").click();
+    await billPage.createBill(BillData);
+    
+    // Count bill before
+    const initialCount = await countBillPage.countBill();
+    
+    await billPage.createBill(BillData); 
+
+    // Control if bill is payed 
+    const isBillClicked = true; 
+    // await billPage.verifyBillsAfterCreation(initialCount, isBillClicked);
+ 
   });
+
 
   // test("Test case 04, create bill", async ({ page }) => {
   //   const clientbill = generateBillData();
@@ -276,11 +296,12 @@ test("Test case 05, create clients and count", async ({ page }) => {
     
     await expect(page.getByRole("heading", { name: "Tester Hotel Overview" }),).toBeVisible();
 
-    // click on bills view
+    // click on reservation view
     await page.locator("#app > div > div > div:nth-child(4) > a").click();
     await reservationPage.createReservation(ReservationData);
 
   });
+
  
  
   // Do a reservation and check if the information is correct
@@ -303,6 +324,8 @@ test("Test case 10, check if reservation is correct", async ({page}) => {
   const items = page.locator('[class="card reservation card"]');
   const itemCount = await items.count();
   console.log("Items", itemCount);
+
+});
 
   // Do a new reservation
   // await page.waitForTimeout(3000); 
@@ -335,7 +358,6 @@ test("Test case 10, check if reservation is correct", async ({page}) => {
   // expect(itemCountafter).toEqual(itemCount + 1);
   // console.log("itemsafter",itemCountafter);
   
-});
 
 // Göra en teardown i min data och logga ut och se att all data försvunnit
 // afterall - 
