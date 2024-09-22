@@ -24,16 +24,13 @@ export class BillPage {
     await expect(this.page.getByText("Value")).toBeVisible();
     await this.page.getByRole("spinbutton").fill(String(BillData.billvalue));
 
-    // Check the checkbox if required
     if (BillData.billclick) {
       await this.page.locator(".checkbox").click();
     }
 
-    // Save the bill
     await expect(this.page.getByText("Save")).toBeVisible();
     await this.page.getByText('Save').click();
 
-    // Ensure the "Bills" heading is visible after saving
     await expect(this.page.getByRole("heading", { name: "Bills" })).toBeVisible();
   }
 }

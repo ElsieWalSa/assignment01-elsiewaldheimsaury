@@ -27,8 +27,7 @@ export class RoomPage {
       
           await this.page.locator("div").filter({ hasText: /^Price$/ }).getByRole("spinbutton").fill(String(roomData.roomprice));
           await this.page.getByRole("listbox").selectOption(roomData.roomfeatures);
-          
-          // Click on save for saving the room
+         
           await this.page.getByText("Save").click();
         }
       }

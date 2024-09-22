@@ -1,4 +1,3 @@
-// import { test, expect, Page } from "@playwright/test";
 import { DashboardPage } from "./pages/dashboard-page";
 import { LoginPage } from "./pages/login-page";
 import { config } from "dotenv";
@@ -46,12 +45,13 @@ test("Test case 02, create room", async ({ page }) => {
   await roomPage.createRoom(roomData);
 }); 
 
-  test("Test case 03, Verify that the create data is correct", async ({ page }) => {
+  test("Test case 03, Verify that the create room is correct", async ({ page }) => {
     const roomPage = new RoomPage(page); 
     const roomData = generateRoomData();
 
     await expect(page.getByRole("heading", { name: "Tester Hotel Overview" })).toBeVisible();
     await page.locator("#app > div > div > div:nth-child(1) > a").click();
+    await roomPage.createRoom(roomData);
 
   // Verify that the data is correct
   const items = page.locator('[class="card room"]');
@@ -60,7 +60,9 @@ test("Test case 02, create room", async ({ page }) => {
   await expect(itemCount).toBeGreaterThan(0);
   const lastRoom = items.nth(itemCount - 1);
   await expect(lastRoom).toContainText(`Floor ${roomData.floornumber}`);
+  console.log(`Floor ${roomData.floornumber}`);
   await expect(lastRoom).toContainText(`Room ${roomData.roomnumber}`);
+  console.log(`Room ${roomData.roomnumber}`)
 });
 
 test("Test case 04, count clients", async ({ page }) => {
@@ -85,17 +87,16 @@ test("Test case 05, create clients and count", async ({ page }) => {
 
   await expect(page.getByRole("heading", { name: "Tester Hotel Overview" })).toBeVisible();
   await page.locator("#app > div > div > div:nth-child(2) > a").click();
+
   // count clients before
   const firstValueofClients = await counterPage.countClients();
 
   await clientPage.createClient();
 
-
   await expect(page.getByRole("heading", { name: "Clients" })).toBeVisible();
 
   // Count client after addinge one
   const lastValueofClients = await counterPage.countClients()
-
 
   await expect(lastValueofClients-firstValueofClients).toBe(1);
   console.log(lastValueofClients-firstValueofClients);
@@ -152,8 +153,6 @@ test("Test case 05, create clients and count", async ({ page }) => {
     
     // Count clients
     await countReservationPage.countReservation();
-
-
   });
  
   test("Test case 09, create a reservation", async ({ page }) => {
@@ -165,10 +164,8 @@ test("Test case 05, create clients and count", async ({ page }) => {
     // click on reservation view
     await page.locator("#app > div > div > div:nth-child(4) > a").click();
     await reservationPage.createReservation(ReservationData);
-
   });
 
- 
   // Do a reservation and check if the information is correct
 test("Test case 10, verify reservation", async ({page}) => {
   const reservationdata = generateReservationData();
@@ -195,9 +192,9 @@ test("Test case 10, verify reservation", async ({page}) => {
 // Teardown 
 test.afterEach('Teardown', async ({page}) => {
   await page.waitForTimeout(3000); 
-  if (page) {  // control `page` 
+  if (page) {  
     console.log('Teardown after tests');
-    await page.close(); // close the side if it is open
+    await page.close(); 
   } else {
     console.log('No page to close');
       }

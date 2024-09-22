@@ -24,7 +24,6 @@ export class ClientPage{
         this.telephoneTextfield = page.locator('div').filter({ hasText: /^Telephone$/ }).getByRole('textbox');
         this.saveButton = page.getByText('Save');
  
-
     }
 
     async createClient() {
@@ -34,8 +33,8 @@ export class ClientPage{
         // Click on create client -button
           await this.page.getByRole("link", { name: "Create Client" }).click();
           await this.page.waitForSelector("text=New Client");
-        //   add clientdata
        
+          //   add clientdata
         await this.nameTextfield.fill(clientData.clientname);
         await this.emailTextfield.fill(clientData.clientemail);
         await this.telephoneTextfield.fill(clientData.clientphonenumber); 
